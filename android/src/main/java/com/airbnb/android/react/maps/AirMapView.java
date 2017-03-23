@@ -778,6 +778,23 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
         Point point = new Point((int) ev.getX(), (int) ev.getY());
         LatLng coords = this.map.getProjection().fromScreenLocation(point);
         WritableMap event = makeClickEventData(coords);
+
+        switch(ev.getActionMasked()) {
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                event.putString("panState", "ended");
+                break;
+            case MotionEvent.ACTION_MOVE:
+                event.putString("panState", "moved");
+                break;
+            case MotionEvent.ACTION_DOWN:
+                event.putString("panState", "started");
+                break;
+            default:
+                event.putString("panState", "other");
+                break;
+        }
+
         manager.pushEvent(this, "onPanDrag", event);
     }
 }
